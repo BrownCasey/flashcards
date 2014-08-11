@@ -63,11 +63,6 @@ $(document).ready(function(){
 	deck[14] = new card("Iowa", "Des Moines");
 	deck[15] = new card("The End!", "Still the end");	
 	
-	var customCard = 
-			'Columbus\t1492\n\"Pearl Harbor\"\t\"1941\"\nIndependence\t1776\nFirst President\tGeorge Washington'
-
-	$('#textarea').html(customCard);
-
 	// next button calls next, insert next Q in html
 	$('button[name=next]').click(function(){
 		$('#card').html(next());
@@ -135,9 +130,6 @@ $(document).ready(function(){
 	$('#getCSV').click(function(){
 		var userCard = $('#textarea').val();
 		objIt(parseIt(userCard));
-		deck = deck2;
-		$('#card').html("Q: " + deck[0].question);
-		$.cookie("cards", JSON.stringify(deck2));
 	});
 	
 	function parseIt(a){
@@ -148,78 +140,13 @@ $(document).ready(function(){
 	
 	function objIt(a){
 		for (i in a){
-			// get the question string before tab
-			var question = a[i].slice(0, a[i].indexOf("\t"));
-			// if the first char is " then trim it
-			while (question.charAt(0) == '"')
-			{
-				question = question.slice(1);
-			}
-			while (question.charAt(question.length - 1) == '"')
-			{
-				question = question.slice(0, question.length - 1);
-			}
-			
-			// get the answer string after tab
-			var answer = a[i].slice(a[i].indexOf("\t") + 1);
-			// if the first char is " trim it
-			while (answer.charAt(0) == '"')
-			{
-				answer = answer.slice(1);
-			}
-			while (answer.charAt(answer.length - 1) == '"')
-			{
-				answer = answer.slice(0, answer.length - 1);
-			}
-			
-		// make a new card for the deck
-		deck2[i] = new card(question, answer);
-		
+			var question = a[i].slice(0, a[i].indexOf("|"));
+			var answer = a[i].slice(a[i].indexOf("|") + 1);
+		deck2[i] = new card(question, answer);		
 		}
 		for (i in deck2)
 		console.log(deck2[i]);
 	}
 	
 	var deck2 = new Array();
-	
-	var deck3 = new Array();
-	
-/*	$.getJSON("qa.json", function(data){
-		for (i in data)
-		{
-			deck3[i] = new card (data[i].question, data[i].answer);
-		}
-	}); */
-	
-	//deck = deck3;
-	
-	if ($.cookie("cards") != null)
-	{
-		var data = JSON.parse($.cookie("cards"));
-		for (i in data)
-			deck3[i] = new card (data[i].question, data[i].answer);
-			
-		deck = deck3;
-		
-		var message = "I see you've already made some flashcards, so I loaded them from memory.<br> If you want to make a new set of cards, <a href='customcards.html' style='color:blue'>Click Here</a>";
-		
-		$("#intro div p").html(message);
-		
-		$("#main").hide(4000);
-	}
-	else
-		$("#intro div p").html("New to Flashcards? Start with a sample of U.S. states and capitals. <br>If you create new cards, they'll be saved until you return.");
-		
-	$('a[href="customcards.html"]').on('click', function(){
-		$.removeCookie("cards");
-	});
-	
-	$("#textarea").on('keydown', function(e){
-		if (e.keyCode == 9){
-			e.preventDefault();
-			var contents = $("#textarea").val();
-			contents += "\t";
-			$("#textarea").val(contents);
-		}
-	});
 });
